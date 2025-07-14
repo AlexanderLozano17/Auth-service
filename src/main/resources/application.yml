@@ -1,0 +1,51 @@
+server:
+  port: 8081 
+
+# --- Configuración de Spring Data JPA y la Base de Datos H2 ---
+spring:
+  # --- Configuraciones personalizadas (opcional, para variables de tu aplicación) ---
+  application:
+    name: auth-service-app
+    version: 1.0.0
+
+  datasource:
+    url: jdbc:h2:mem:authdb;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE 
+    driverClassName: org.h2.Driver
+    username: sa 
+    password:
+
+  jpa:
+    hibernate:
+      ddl-auto: update 
+    show-sql: true 
+    database-platform: org.hibernate.dialect.H2Dialect
+    properties:
+      hibernate:
+        format_sql: true 
+
+  h2:
+    console:
+      enabled: true     
+      path: /h2-console   
+
+  # --- Configuración de Spring Security (Si la usas y no la tienes en código) ---
+  security:
+    user:
+      name: user 
+      password: password 
+
+    ignoring:
+      # Ignora la seguridad para la ruta de la consola H2
+      - /h2-console/**
+   
+  # --- Configuración de Logging con Logback ---
+  logging:
+    level:
+      root: INFO 
+      org.springframework: INFO
+      org.hibernate: INFO 
+      com.auth.authservice: DEBUG 
+
+  jwt:
+    secret: ${JWT_SECRET:your_super_secret_jwt_key_that_should_be_long_and_complex}
+    expiration-ms: 3600000
