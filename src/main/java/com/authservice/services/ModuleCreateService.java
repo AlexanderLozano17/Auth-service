@@ -8,6 +8,7 @@ import com.authservice.dto.ModuleDto;
 import com.authservice.entities.ModuleEntity;
 import com.authservice.repositories.ModuleJpaRepository;
 import com.authservice.usecases.ModuleCreateUseCase;
+import com.authservice.utils.LogHelper;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,9 +20,9 @@ public class ModuleCreateService implements ModuleCreateUseCase {
 	
 	private final ModuleJpaRepository moduleJpaRepository;
 
-
 	@Override
-	public Optional<ModuleDto> create(ModuleDto dto) {		
+	public Optional<ModuleDto> create(ModuleDto dto) {	
+		log.info(LogHelper.start(getClass(), "create(dto)"));
 		//ModuleEntity entity = mapper.toEntity(dto);		
 		
 		ModuleEntity entity = new ModuleEntity();

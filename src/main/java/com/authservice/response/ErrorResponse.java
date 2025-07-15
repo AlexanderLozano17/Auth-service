@@ -18,7 +18,7 @@ import lombok.ToString;
 @ToString(callSuper = true) // Es importante para que toString incluya los campos de BaseEntity
 @EqualsAndHashCode(callSuper = true) // Es importante para que equals/hashCode consideren los campos de BaseEntity (especialmente el id)
 @Builder
-public class ErrorResponse extends ResponseBase {
+public class ErrorResponse extends BaseResponse {
 
 	private static final long serialVersionUID = 1L;
 
