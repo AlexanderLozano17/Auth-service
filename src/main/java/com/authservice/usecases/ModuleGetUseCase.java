@@ -19,4 +19,16 @@ public interface ModuleGetUseCase {
 	 * @return
 	 */
 	List<ModuleDto> getAll();
+	
+	/**
+	 * 
+	 * @return
+	 */
+	List<ModuleDto> getOnlyEnable();
+	
+	/**
+	 * 
+	 * @return
+	 */
+	List<ModuleDto> getOnlyDisabled();
 }

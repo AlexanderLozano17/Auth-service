@@ -6,8 +6,10 @@ import org.springframework.stereotype.Service;
 
 import com.authservice.dto.ModuleDto;
 import com.authservice.entities.ModuleEntity;
+import com.authservice.mapper.ModuleMapper;
 import com.authservice.repositories.ModuleJpaRepository;
 import com.authservice.usecases.ModuleCreateUseCase;
+import com.authservice.utils.LogHelper;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,31 +20,20 @@ import lombok.extern.slf4j.Slf4j;
 public class ModuleCreateService implements ModuleCreateUseCase {
 	
 	private final ModuleJpaRepository moduleJpaRepository;
-
+	private final ModuleMapper mapper;
 
 	@Override
-	public Optional<ModuleDto> create(ModuleDto dto) {		
-		//ModuleEntity entity = mapper.toEntity(dto);		
+	public Optional<ModuleDto> create(ModuleDto dto) {	
+		log.info(LogHelper.start(getClass(), "create(dto)"));
 		
-		ModuleEntity entity = new ModuleEntity();
-		entity.setNameEs(dto.getNameEs());
-		entity.setNameEn(dto.getNameEn());		
-		entity.setDescriptionEs(dto.getDescriptionEs());
-		entity.setDescriptionEn(dto.getDescriptionEn());		
+		ModuleEntity entity = mapper.toEntity(dto);		
 		
 		Optional<ModuleEntity> savedEntityOptional =  Optional.ofNullable(moduleJpaRepository.save(entity));
 		
 		ModuleEntity saveEntity = savedEntityOptional
 				.orElseThrow(() -> new RuntimeException("Fallo al guardar el modulo.")); 
 
-		ModuleDto moduleDto = new ModuleDto().builder()
-				.id(saveEntity.getId())
-				.nameEs(saveEntity.getNameEs())
-				.nameEn(saveEntity.getNameEn())
-				.descriptionEs(saveEntity.getDescriptionEs())
-				.descriptionEn(saveEntity.getDescriptionEn())
-				.active(saveEntity.getActive())
-				.build();
+		ModuleDto moduleDto = mapper.toDto(saveEntity);
 		return Optional.ofNullable(moduleDto);
 	}
 

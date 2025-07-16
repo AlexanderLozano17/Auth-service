@@ -9,6 +9,7 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 import com.authservice.dto.ModuleDto;
 import com.authservice.entities.ModuleEntity;
 import com.authservice.request.ModuleCreateRequest;
+import com.authservice.request.ModuleUpdateRequest;
 
 @Mapper(
 	    componentModel = MappingConstants.ComponentModel.SPRING,
@@ -64,6 +65,10 @@ public interface ModuleMapper {
     
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "active", ignore = true)
-    ModuleDto requesCreatetToDto(ModuleCreateRequest request);
+    ModuleDto requesCreateToDto(ModuleCreateRequest request);
+    
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "active", ignore = true)
+    ModuleDto requesUpdateToDto(ModuleUpdateRequest request);
 
 }
