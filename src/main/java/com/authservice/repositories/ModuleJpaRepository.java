@@ -27,7 +27,7 @@ public interface ModuleJpaRepository extends JpaRepository<ModuleEntity, Long> {
 	 *
 	 * @return 
 	 */
-    @Query("SELECT m FROM ModuleEntity m WHERE m.active = true")
+    @Query("SELECT m FROM ModuleEntity m WHERE m.active = true AND m.deletedAt IS NULL")
 	List<ModuleEntity> findOnlyEnable();
 	
     /**
@@ -48,5 +48,15 @@ public interface ModuleJpaRepository extends JpaRepository<ModuleEntity, Long> {
     @Transactional // Asegura que la operación se ejecute dentro de una transacción
     @Query("UPDATE ModuleEntity m SET m.active = false, m.deletedAt = :deletedAt WHERE m.id = :id")
     void softDeleteById(Long id, LocalDateTime deletedAt);
+    
+    @Modifying // Indica que esta consulta modificará la base de datos (UPDATE)
+    @Transactional // Asegura que la operación se ejecute dentro de una transacción
+    @Query("UPDATE ModuleEntity m SET m.active = true, m.updatedAt = :updatedAt WHERE m.id = :id")
+    void enableModule(Long id, LocalDateTime updatedAt);
+    
+    @Modifying // Indica que esta consulta modificará la base de datos (UPDATE)
+    @Transactional // Asegura que la operación se ejecute dentro de una transacción
+    @Query("UPDATE ModuleEntity m SET m.active = false, m.updatedAt = :updatedAt WHERE m.id = :id")
+    void disabledModule(Long id, LocalDateTime updatedAt);
 
 }

@@ -46,6 +46,18 @@ spring:
       org.hibernate: INFO 
       com.auth.authservice: DEBUG 
 
+  # Configuración de SpringDoc OpenAPI
+  springdoc:
+    # Ruta donde se generará la especificación OpenAPI en formato JSON
+    # Por defecto es /v3/api-docs
+    api-docs:
+      path: /v3/api-docs
+    # Configuración específica para la interfaz de usuario de Swagger UI
+    swagger-ui:
+      # Ruta donde se accederá a la interfaz de usuario de Swagger UI
+      # Por defecto es /swagger-ui.html o /swagger-ui/index.html
+      path: /swagger-ui.html
+
   jwt:
     secret: ${JWT_SECRET:your_super_secret_jwt_key_that_should_be_long_and_complex}
     expiration-ms: 3600000

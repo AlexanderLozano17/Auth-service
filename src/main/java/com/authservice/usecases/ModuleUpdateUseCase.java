@@ -13,13 +13,19 @@ public interface ModuleUpdateUseCase {
 	 * @param entity
 	 * @return
 	 */
-	Optional<ModuleDto> update(Long id, ModuleEntity entity);
+	Optional<ModuleDto> update(Long id, ModuleDto fto);
 	
 	/**
 	 * 
 	 * @param id
-	 * @param value
 	 * @return
 	 */
-	boolean updateModuleStatus(Long id, boolean value);
+	boolean enableModule(Long id);
+	
+	/**
+	 * 
+	 * @param id
+	 * @return
+	 */
+	boolean disabledModule(Long id);
 }

@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import com.authservice.response.ErrorResponse;
 
@@ -92,7 +94,6 @@ public class GlobalExceptionHandler {
     }
 
 	@ExceptionHandler(MethodArgumentNotValidException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<ErrorResponse> handleValidationExceptions(MethodArgumentNotValidException ex, WebRequest request) {
 		log.error("Uncaught exception: " + ex.getMessage(), ex);
 		
@@ -109,12 +110,33 @@ public class GlobalExceptionHandler {
         ErrorResponse errorResponse = ErrorResponse.builder()
             .timestamp(LocalDateTime.now())
             .status(HttpStatus.BAD_REQUEST.value())
-            .error(HttpStatus.BAD_REQUEST.getReasonPhrase())
+            .error("Error validate")
             .message(failMessage)
             .path(request.getDescription(false).replace("uri=", "")) // Obtiene la URI de la solicitud
             .details(errors)
             .build();
 
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+	
+	@ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<ErrorResponse> handleTypeMismatch(MethodArgumentTypeMismatchException ex) {
+        
+		Locale currentLocale = LocaleContextHolder.getLocale();
+        String failMessage = messageSource.getMessage("error.parameter", null, currentLocale);
+		    
+		String errorMessage = String.format(failMessage,
+                ex.getName(),
+                Optional.ofNullable(ex.getRequiredType()).map(Class::getSimpleName).orElse("unknown"),
+                ex.getValue());
+
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .status(HttpStatus.BAD_REQUEST.value())
+                .message(errorMessage)
+                .timestamp(LocalDateTime.now())
+                .build();
+        
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 }

@@ -12,8 +12,8 @@ public class OpenApiConfig {
     @Bean
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
-                .info(new Info().title("Price Consultation API")
-                        .description("API for consulting product prices")
+                .info(new Info().title("Auth")
+                        .description("API for consulting Autorization")
                         .version("1.0"));
     }
 }

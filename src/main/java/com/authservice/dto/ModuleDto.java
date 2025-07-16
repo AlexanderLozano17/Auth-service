@@ -22,6 +22,7 @@ public class ModuleDto implements Serializable {
 	private String nameEn;
 	private String descriptionEs;
 	private String descriptionEn;
+	private String prefix;
 	private Boolean active;
 	
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")

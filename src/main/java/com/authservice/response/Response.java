@@ -1,9 +1,12 @@
 package com.authservice.response;
 
+import static com.authservice.response.BaseResponse.getCurrentRequestPath;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -18,6 +21,10 @@ import lombok.experimental.SuperBuilder;
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true) 
 @SuperBuilder
+@Schema(
+	    description = "Standard structure for API responses, encapsulating the result of an operation.",
+	    example = "{\n  \"success\": true,\n  \"statusCode\": 200,\n  \"message\": \"Operation performed successfully.\",\n  \"data\": { \"id\": 1, \"nameEs\": \"Test Module\" },\n  \"path\": \"/api/v1/modules/1\",\n  \"errors\": []\n}"
+	)
 public class Response<T> extends BaseResponse {
 
     private static final long serialVersionUID = 1L;
@@ -27,18 +34,21 @@ public class Response<T> extends BaseResponse {
      * - `true` si la operación se completó sin errores lógicos o de negocio.
      * - `false` si hubo algún error (ej. validación, negocio, interno).
      */
+    @Schema(description = "Indicates whether the operation was successful.", example = "true")
     private boolean success;
 
     /**
      * Un código de estado HTTP que refleja el resultado de la operación.
      * Ejemplos: 200 (OK), 201 (Created), 400 (Bad Request), 404 (Not Found), 500 (Internal Server Error).
      */
+    @Schema(description = "HTTP status code of the response.", example = "200")
     private int statusCode;
 
     /**
      * Un mensaje descriptivo que proporciona información sobre el resultado de la operación.
      * Puede ser un mensaje de éxito ("Usuario creado exitosamente") o un mensaje de error ("Credenciales inválidas").
      */
+    @Schema(description = "Descriptive message of the operation's result.", example = "Resource retrieved successfully.")
     private String message;
 
     /**
@@ -46,12 +56,14 @@ public class Response<T> extends BaseResponse {
      * Su tipo es genérico y puede ser cualquier objeto (ej. UserDTO, List<ProductDTO>, Map<String, Object>).
      * Será `null` en caso de errores que no devuelvan datos específicos.
      */
+    @Schema(description = "The main data returned by the operation. Can be an object, a list, or null.", nullable = true)
     private T data;
 
     /**
      * La ruta de la solicitud (URI) que generó esta respuesta.
      * Útil para depuración y seguimiento de errores.
      */
+    @Schema(description = "The request path that generated this response.", example = "/api/v1/modules/1")
     private String path;
 
     /**
@@ -61,6 +73,7 @@ public class Response<T> extends BaseResponse {
      * Se inicializa como una lista vacía para evitar NullPointerExceptions.
      */
     @Builder.Default // Asegura que Lombok Builder inicialice esta lista si no se especifica
+    @Schema(description = "List of detailed error messages, present if the operation was not successful.", example = "[\"The 'name' field is required.\"]")
     private List<String> errors = new ArrayList<>();
 
     // --- Métodos de conveniencia para crear respuestas comunes ---
@@ -79,6 +92,7 @@ public class Response<T> extends BaseResponse {
                 .statusCode(200) // OK
                 .message(message)
                 .data(data)
+                .path(getCurrentRequestPath())
                 .timestamp(LocalDateTime.now())
                 .build();
     }
@@ -94,6 +108,7 @@ public class Response<T> extends BaseResponse {
                 .success(true)
                 .statusCode(200) // OK
                 .message(message)
+                .path(getCurrentRequestPath())
                 .timestamp(LocalDateTime.now())
                 .build();
     }
@@ -110,6 +125,7 @@ public class Response<T> extends BaseResponse {
                 .success(false)
                 .statusCode(statusCode)
                 .message(message)
+                .path(getCurrentRequestPath())
                 .timestamp(LocalDateTime.now())
                 .build();
     }
@@ -127,6 +143,7 @@ public class Response<T> extends BaseResponse {
                 .success(false)
                 .statusCode(statusCode)
                 .message(message)
+                .path(getCurrentRequestPath())
                 .errors(errors)
                 .timestamp(LocalDateTime.now())
                 .build();

@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -18,6 +19,10 @@ import lombok.experimental.SuperBuilder;
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true) 
 @SuperBuilder
+@Schema(
+	    description = "Standard structure for API responses, encapsulating the result of an operation.",
+	    example = "{\n  \"success\": true,\n  \"statusCode\": 200,\n  \"message\": \"Operation performed successfully.\",\n  \"errors\": []\n}"
+	)
 public class ResponseEasy<T> extends BaseResponse {
 
 	private static final long serialVersionUID = 1L;
@@ -27,19 +32,29 @@ public class ResponseEasy<T> extends BaseResponse {
      * - `true` si la operación se completó sin errores lógicos o de negocio.
      * - `false` si hubo algún error (ej. validación, negocio, interno).
      */
-    private boolean success;
+	 @Schema(description = "Indicates whether the operation was successful.", example = "true")
+	 private boolean success;
 
     /**
      * Un código de estado HTTP que refleja el resultado de la operación.
      * Ejemplos: 200 (OK), 201 (Created), 400 (Bad Request), 404 (Not Found), 500 (Internal Server Error).
      */
-    private int statusCode;
+	 @Schema(description = "HTTP status code of the response.", example = "200")
+	 private int statusCode;
 
     /**
      * Un mensaje descriptivo que proporciona información sobre el resultado de la operación.
      * Puede ser un mensaje de éxito ("Usuario creado exitosamente") o un mensaje de error ("Credenciales inválidas").
      */
-    private String message;
+	 @Schema(description = "Descriptive message of the operation's result.", example = "Resource retrieved successfully.")
+	 private String message;
+
+	/**
+	 * La ruta de la solicitud (URI) que generó esta respuesta. Útil para depuración
+	 * y seguimiento de errores.
+	 */
+	@Schema(description = "The request path that generated this response.", example = "/api/v1/modules/1")
+	private String path;
     
     /**
      * Una lista de mensajes de error detallados.
@@ -48,6 +63,7 @@ public class ResponseEasy<T> extends BaseResponse {
      * Se inicializa como una lista vacía para evitar NullPointerExceptions.
      */
     @Builder.Default // Asegura que Lombok Builder inicialice esta lista si no se especifica
+    @Schema(description = "List of detailed error messages, present if the operation was not successful.", example = "[\"The 'name' field is required.\"]")
     private List<String> errors = new ArrayList<>();
     
     /**
@@ -61,6 +77,7 @@ public class ResponseEasy<T> extends BaseResponse {
                 .success(true)
                 .statusCode(200) // OK
                 .message(message)
+                .path(getCurrentRequestPath())
                 .timestamp(LocalDateTime.now())
                 .build();
     }
@@ -77,6 +94,7 @@ public class ResponseEasy<T> extends BaseResponse {
                 .success(false)
                 .statusCode(statusCode)
                 .message(message)
+                .path(getCurrentRequestPath())
                 .timestamp(LocalDateTime.now())
                 .build();
     }
@@ -94,6 +112,7 @@ public class ResponseEasy<T> extends BaseResponse {
                 .success(false)
                 .statusCode(statusCode)
                 .message(message)
+                .path(getCurrentRequestPath())
                 .errors(errors)
                 .timestamp(LocalDateTime.now())
                 .build();
